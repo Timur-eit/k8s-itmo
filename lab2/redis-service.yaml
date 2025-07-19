@@ -1,0 +1,23 @@
+apiVersion: v1
+# kind: создаваемого ресурса
+# Service сетевой сервис
+kind: Service
+
+# metadata: имя и пространство имён, где создаётся сервис
+metadata:
+  name: redis
+  namespace: redis
+# spec: как работает сервис
+spec:
+  # clusterIP: None – Headless Service
+  # у сервиса нет IP-адреса, он прикидывает запросы в поды напрямую
+  clusterIP: None
+
+  # selector: сервис будет направлять трафик на поды, у которых есть label app=redis
+  selector:
+    app: redis
+  ports:
+    - name: redis
+      # 6379 порт redis по умолчанию
+      # порт, по которому сервис будет доступен внутри кластера
+      port: 6379

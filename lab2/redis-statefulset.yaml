@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+
+# kind тип объекта
+# StatefulSet используется для запуска приложений, которые требуют сохранения состояния
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: redis
+spec:
+  serviceName: 'redis'
+  # replicas сколько подов нужно создать
+  replicas: 1
+
+  # selector определяет, какие поды управляются
+  # должен совпадать с labels ниже в template
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          # образ redis, на проде лучше фиксировать конкретную версию
+          # image: redis:latest
+          image: redis:7.4.5-alpine
+          ports:
+            - containerPort: 6379
+              name: redis
+          volumeMounts:
+            # Монтирует том redis-data внутрь контейнера в каталог /data
+            # redis по умолчанию сохраняет туда данные
+            - name: redis-data
+              mountPath: /data
+  # определяет шаблон для PVC (Persistent Volume Claim) – сколько ресурсов надо для каждого пода
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        # ReadWriteOnce – том может быть примонтирован только одним подом
+        accessModes: ['ReadWriteOnce']
+        resources:
+          requests:
+            # размер запрашиваемого хранилища на каждый под
+            storage: 1Gi
