@@ -1,0 +1,32 @@
+# ServiceAccount создаёт пользователя для входа
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+---
+# ClusterRoleBinding даёт права cluster-admin
+# пользователю admin-user выдать права администратора всего кластера
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: admin-user
+    namespace: kubernetes-dashboard
+---
+# Secret создаёт связанный токен доступа
+# для получения Bearer Token
+apiVersion: v1
+kind: Secret
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+  annotations:
+    kubernetes.io/service-account.name: 'admin-user'
+type: kubernetes.io/service-account-token
