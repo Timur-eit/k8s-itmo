@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-chat-app
+  # kubectl create namespace redis-chat-app
+  namespace: redis-chat-app
+  labels:
+    app: redis-chat-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-chat-app
+  template:
+    metadata:
+      labels:
+        app: redis-chat-app
+    spec:
+      containers:
+        - name: redis-chat-app
+          image: rayhimself/basic-redis-chat-app-api
+          ports:
+            - containerPort: 8080
+          env:
+            - name: REDIS_ENDPOINT_URL
+              value: 'redis.redis.svc.cluster.local:6379'
