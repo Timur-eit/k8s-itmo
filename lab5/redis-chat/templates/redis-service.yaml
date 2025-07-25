@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.redis.serviceName }}
+  namespace: {{ .Values.redis.namespace }}
+  labels:
+    app: {{ .Values.redis.name }}
+spec:
+  clusterIP: None # Headless-сервис для StatefulSet
+  selector:
+    app: {{ .Values.redis.name }}
+  ports:
+    - name: redis
+      port: {{ .Values.redis.port }}

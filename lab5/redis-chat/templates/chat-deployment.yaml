@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.chatApp.name }}
+  namespace: {{ .Values.chatApp.namespace }}
+  labels:
+    app: {{ .Values.chatApp.name }}
+spec:
+  replicas: {{ .Values.chatApp.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.chatApp.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.chatApp.name }}
+    spec:
+      containers:
+        - name: {{ .Values.chatApp.name }}
+          image: '{{ .Values.chatApp.image.repository }}:{{ .Values.chatApp.image.tag }}'
+          ports:
+            - containerPort: {{ .Values.chatApp.containerPort }}
+          env:
+            - name: REDIS_ENDPOINT_URL
+              value: '{{ .Values.chatApp.redisEndpoint }}'          
